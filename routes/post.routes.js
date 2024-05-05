@@ -67,73 +67,33 @@ postRoute.delete('/:post_id',auth,isPostOwner,async(req,res)=>{
 })
 
 //Like a post
-// postRoute.post('/:post_id/like', auth,async(req,res)=>{
-//     try {
-//         const post = await PostModel.findById(req.params.post_id);
-//         if (!post.likes.includes(req.user._id)) {
-//             post.likes.push(req.user._id);
-//             await post.save();
-//             res.status(201).json({ message: 'You liked the post' });
-//         } else {
-//             res.status(400).json({ message: 'You already liked this post' });
-//         }
-//     } catch (error) {
-//         res.status(500).json({ error: error.message });
-//     }
-// })
-
-postRoute.post('/api/posts/:post_id/like', auth, async (req, res) => {
-    try {
-      const post = await PostModel.findById(req.params.post_id);
-      const userId = req.user._id;
-      const index = post.likes.indexOf(userId);
-  
-      if (index === -1) {
-        post.likes.push(userId);
-        await post.save();
-        res.json({ liked: true, message: 'Post liked!' });
-      } else {
-        post.likes.splice(index, 1);
-        await post.save();
-        res.json({ liked: false, message: 'Like removed!' });
-      }
-    } catch (error) {
-      res.status(500).json({ message: 'Server error', error: error.message });
-    }
-  });
-  
-
-//Comment on a post
-// postRoute.post('/:post_id/comment',auth,async(req,res)=>{
-//     const { comment } = req.body;
-//     try {
-//         const post = await PostModel.findById(req.params.post_id);
-//         post.comments.push({ user_id: req.user._id, comment });
-//         await post.save();
-//         res.status(201).json({ message: 'Comment added' });
-//     } catch (error) {
-//         res.status(500).json({ error: error.message });
-//     }
-// })
-
-// In post.routes.js
-postRoute.post('/:post_id/comment', auth, async (req, res) => {
+postRoute.post('/:post_id/like', auth,async(req,res)=>{
     try {
         const post = await PostModel.findById(req.params.post_id);
-        const { comment } = req.body;
-        if (!post) {
-            return res.status(404).json({ message: 'Post not found' });
+        if (!post.likes.includes(req.user._id)) {
+            post.likes.push(req.user._id);
+            await post.save();
+            res.status(201).json({ message: 'You liked the post' });
+        } else {
+            res.status(400).json({ message: 'You already liked this post' });
         }
-        post.comments.push({ user_id: req.user._id, comment });
-        await post.save();
-        res.status(201).json({ message: 'Comment added', commentCount: post.comments.length });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
-});
+})
 
-
-
+//Comment on a post
+postRoute.post('/:post_id/comment',auth,async(req,res)=>{
+    const { comment } = req.body;
+    try {
+        const post = await PostModel.findById(req.params.post_id);
+        post.comments.push({ user_id: req.user._id, comment });
+        await post.save();
+        res.status(201).json({ message: 'Comment added' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+})
 
 
 module.exports = {
