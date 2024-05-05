@@ -10,9 +10,12 @@ dotenv.config()
 const app = express();
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: 'https://masai-forum-fe.vercel.app/', 
+    optionsSuccessStatus: 200
+}));
 app.use('/api',userRoute);
-app.use('/api',postRoute)
+app.use('/api/posts',postRoute)
 
 
 

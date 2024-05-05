@@ -2,14 +2,25 @@ const jwt = require('jsonwebtoken');
 const {UserModel }= require('../model/user.model');
 const {PostModel }= require('../model/post.model');
 
+// const auth = async (req, res, next) => {
+//     try {
+//         const token = req.headers.authorization.split(' ')[1];
+//         const decoded = jwt.verify(token, process.env.JWT_SECRET);
+//         req.user = await UserModel.findById(decoded.id);
+//         next();
+//     } catch (error) {
+//         return res.status(401).json({ message: 'Authentication failed' });
+//     }
+// };
 const auth = async (req, res, next) => {
     try {
-        const token = req.headers.authorization.split(' ')[1];
+        const token = req.headers.authorization.split(' ')[1]; // Assumes 'Bearer TOKEN'
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = await UserModel.findById(decoded.id);
         next();
     } catch (error) {
-        return res.status(401).json({ message: 'Authentication failed' });
+        console.error('Authentication failed:', error);
+        res.status(401).json({ message: 'Authentication failed' });
     }
 };
 
